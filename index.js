@@ -1,3 +1,4 @@
+var movieThing;
 document.addEventListener('DOMContentLoaded', function () {
     function renderMovies(movieArray) {
         let movieHTML = movieArray.map(function (currentMovie) {
@@ -20,22 +21,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return movieHTML.join('')
     }
-    // http://www.omdbapi.com/?i=tt3896198&apikey=cffaa38a
 
     document.getElementById('search-form').addEventListener('submit', e => {
         e.preventDefault()
         const moviesContainer = document.querySelector('.movies-container')
         const searchText = e.target[0].value
         let urlString = encodeURIComponent(searchText)
-        console.log(urlString)
-
-
 
         axios.get('http://www.omdbapi.com/?i=tt3896198&apikey=cffaa38a&s=' + urlString)
             .then(resp => {
                 console.log(resp.data)
-                let movieHTML = renderMovies(resp.data.Search);
+                let movieHTML = renderMovies(resp.data.Search)
                 moviesContainer.innerHTML = movieHTML
+                movieThing = resp.data.Search
 
             })
 
@@ -45,18 +43,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function saveToWatchlist(imdbID) {
 
-    let movie = movieData.find(function (currentMovie) {
+    let movie = movieThing.find(function (currentMovie) {
         return currentMovie.imdbID == imdbID;
     })
 
     let watchlistJSON = localStorage.getItem('watchlist')
     let watchlist = JSON.parse(watchlistJSON)
-    if (watchlist === null) {
+    if (watchlist == null) {
         watchlist = []
     }
     watchlist.push(movie)
     watchlistJSON = JSON.stringify(watchlist)
     localStorage.setItem('watchlist', watchlistJSON)
-
 
 }
